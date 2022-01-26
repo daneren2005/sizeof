@@ -20,6 +20,16 @@ describe('sizeof', function () {
     sizeof(5).should.be.equal(8)
   })
 
+  it('bigint size shall be 8', function () {
+    sizeof(5n).should.be.equal(8)
+  })
+  it('date size shall be 8', function () {
+    sizeof(new Date()).should.be.equal(8)
+  })
+  it('Int8Array should rely on type for the length', function () {
+    sizeof(new Int8Array(20)).should.be.equal(20)
+  })
+
   it('undefined is 0', function () {
     sizeof().should.be.equal(0)
   })
@@ -40,6 +50,9 @@ describe('sizeof', function () {
     sizeof(Buffer.alloc(3)).should.be.equal(3)
   })
 
+  it('empty object shall be 0', () => {
+    sizeof({}).should.be.equal(0)
+  })
   it('nested objects shall be counted in full', function () {
     // 4 one two-bytes char strings and 3 eighth-bytes numbers
     var param = { a: 1, b: 2, c: { d: 4 } }
@@ -123,7 +136,35 @@ describe('sizeof', function () {
 
   it('supports global symbols', () => {
     const globalSymbol = Symbol.for('a')
-    const obj = { [globalSymbol]: 'b'}
+    const obj = { [globalSymbol]: 'b' }
     sizeof(obj).should.equal(4)
+  })
+
+  describe('maps', () => {
+    it('empty map shall be 0', () => {
+      const map = new Map()
+      sizeof(map).should.equal(0)
+    })
+
+    it('should handle both string and int keys', () => {
+      const map = new Map()
+      map.set(5, 'Test')
+      map.set('65', 'Again')
+      sizeof(map).should.equal(30)
+    })
+  })
+  describe('sets', () => {
+    it('empty set shall be 0', () => {
+      const set = new Set()
+      sizeof(set).should.equal(0)
+    })
+
+    it('should handle both string and int keys', () => {
+      const set = new Set()
+      set.add('Test')
+      set.add('Again2')
+      set.add('Test')
+      sizeof(set).should.equal(20)
+    })
   })
 })

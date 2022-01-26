@@ -5,14 +5,14 @@
 var ECMA_SIZES = require('./byte_size')
 var Buffer = require('buffer/').Buffer
 
-function allProperties(obj) {
+function allProperties (obj) {
   const stringProperties = []
-  for (var prop in obj) { 
-      stringProperties.push(prop)
+  for (var prop in obj) {
+    stringProperties.push(prop)
   }
   if (Object.getOwnPropertySymbols) {
-      var symbolProperties = Object.getOwnPropertySymbols(obj)
-      Array.prototype.push.apply(stringProperties, symbolProperties)
+    var symbolProperties = Object.getOwnPropertySymbols(obj)
+    Array.prototype.push.apply(stringProperties, symbolProperties)
   }
   return stringProperties
 }
@@ -48,9 +48,46 @@ function sizeOfObject (seen, object) {
 
   return bytes
 }
+function sizeOfMap (seen, object) {
+  if (object == null) {
+    return 0
+  }
+
+  var bytes = 0
+  const it = object.keys()
+  let next = it.next()
+  while (!next.done) {
+    const key = next.value
+    bytes += getCalculator(seen)(key)
+
+    const value = object.get(key)
+    bytes += getCalculator(seen)(value)
+
+    next = it.next()
+  }
+
+  return bytes
+}
+function sizeOfSet (seen, object) {
+  if (object == null) {
+    return 0
+  }
+
+  var bytes = 0
+  const it = object.values()
+  let next = it.next()
+  while (!next.done) {
+    const value = next.value
+    bytes += getCalculator(seen)(value)
+
+    next = it.next()
+  }
+
+  return bytes
+}
 
 function getCalculator (seen) {
-  return function calculator(object) {
+  return function calculator (object) {
     if (Buffer.isBuffer(object)) {
       return object.length
     }
@@ -61,16 +98,25 @@ function getCalculator (seen) {
         return object.length * ECMA_SIZES.STRING
       case 'boolean':
         return ECMA_SIZES.BOOLEAN
-      case 'number':
+      case 'number': case 'bigint':
         return ECMA_SIZES.NUMBER
       case 'symbol':
         const isGlobalSymbol = Symbol.keyFor && Symbol.keyFor(object)
-        return isGlobalSymbol ? Symbol.keyFor(object).length * ECMA_SIZES.STRING : (object.toString().length - 8) * ECMA_SIZES.STRING 
+        return isGlobalSymbol ? Symbol.keyFor(object).length * ECMA_SIZES.STRING : (object.toString().length - 8) * ECMA_SIZES.STRING
       case 'object':
         if (Array.isArray(object)) {
           return object.map(getCalculator(seen)).reduce(function (acc, curr) {
             return acc + curr
           }, 0)
+        } else if (object instanceof Map) {
+          return sizeOfMap(seen, object)
+        } else if (object instanceof Set) {
+          return sizeOfSet(seen, object)
+        } else if (object instanceof Date) {
+          return ECMA_SIZES.NUMBER
+        } else if (object && object.byteLength) {
+          // Typed arrays have BYTES_PER_ELEMENT and byteLength which can be used instead
+          return object.byteLength
         } else {
           return sizeOfObject(seen, object)
         }

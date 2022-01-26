@@ -4,7 +4,10 @@
   "description": "Sizeof of a JavaScript object in Bytes",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/standard; ./node_modules/.bin/mocha -R tap"
+    "test": "npm run test:standard && npm run test:unit",
+    "test:unit": "npx mocha -R tap",
+    "test:standard": "npx standard",
+    "test:standard:fix": "npx standard --fix"
   },
   "repository": {
     "type": "git",
