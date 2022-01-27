@@ -4,7 +4,6 @@
 
 var should = require('should')
 var sizeof = require('../index')
-const Buffer = require('buffer/').Buffer
 
 describe('sizeof', function () {
   it('should handle null in object keys', function () {
@@ -44,10 +43,6 @@ describe('sizeof', function () {
 
   it('boolean size shall be 4', function () {
     sizeof(true).should.be.equal(4)
-  })
-
-  it('buffer size should be correct', function () {
-    sizeof(Buffer.alloc(3)).should.be.equal(3)
   })
 
   it('empty object shall be 0', () => {

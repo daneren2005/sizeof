@@ -3,7 +3,6 @@
 'use strict'
 
 var ECMA_SIZES = require('./byte_size')
-var Buffer = require('buffer/').Buffer
 
 function allProperties (obj) {
   const stringProperties = []
@@ -88,10 +87,6 @@ function sizeOfSet (seen, object) {
 
 function getCalculator (seen) {
   return function calculator (object) {
-    if (Buffer.isBuffer(object)) {
-      return object.length
-    }
-
     var objectType = typeof (object)
     switch (objectType) {
       case 'string':
@@ -129,7 +124,7 @@ function getCalculator (seen) {
 /**
  * Main module's entry point
  * Calculates Bytes for the provided parameter
- * @param object - handles object/string/boolean/buffer
+ * @param object - handles object/string/boolean
  * @returns {*}
  */
 function sizeof (object) {
