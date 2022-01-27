@@ -20,29 +20,18 @@ function sizeOfObject (seen, object) {
   if (object == null) {
     return 0
   }
+  // Do not recalculate circular references
+  if (seen.has(object)) {
+    return 0
+  }
+  seen.add(object)
 
   var bytes = 0
   var properties = allProperties(object)
   for (var i = 0; i < properties.length; i++) {
     var key = properties[i]
-    // Do not recalculate circular references
-    if (typeof object[key] === 'object' && object[key] !== null) {
-      if (seen.has(object[key])) {
-        continue
-      }
-      seen.add(object[key])
-    }
-
     bytes += getCalculator(seen)(key)
-    try {
-      bytes += getCalculator(seen)(object[key])
-    } catch (ex) {
-      if (ex instanceof RangeError) {
-        // circular reference detected, final result might be incorrect
-        // let's be nice and not throw an exception
-        bytes = 0
-      }
-    }
+    bytes += getCalculator(seen)(object[key])
   }
 
   return bytes
@@ -51,6 +40,11 @@ function sizeOfMap (seen, object) {
   if (object == null) {
     return 0
   }
+  // Do not recalculate circular references
+  if (seen.has(object)) {
+    return 0
+  }
+  seen.add(object)
 
   var bytes = 0
   const it = object.keys()
@@ -71,6 +65,11 @@ function sizeOfSet (seen, object) {
   if (object == null) {
     return 0
   }
+  // Do not recalculate circular references
+  if (seen.has(object)) {
+    return 0
+  }
+  seen.add(object)
 
   var bytes = 0
   const it = object.values()

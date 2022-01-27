@@ -2,7 +2,6 @@
 
 /* global describe, it */
 
-var should = require('should')
 var sizeof = require('../index')
 
 describe('sizeof', function () {
@@ -65,11 +64,18 @@ describe('sizeof', function () {
     sizeof(obj).should.be.equal(ELEMENTS * 2 * (('' + ELEMENTS).length) + ELEMENTS * 8)
   })
 
-  it('report an error for circular dependency objects', function () {
+  it('handles recursive objects', function () {
     var firstLevel = { a: 1 }
     var secondLevel = { b: 2, c: firstLevel }
-    firstLevel.second = secondLevel
-    should.exist(sizeof(firstLevel))
+
+    sizeof(firstLevel).should.be.equal(10)
+    sizeof(secondLevel).should.be.equal(22)
+  })
+  it('only count the key for circular references', function () {
+    var firstLevel = { a: 1 }
+    var secondLevel = { b: 2, c: firstLevel }
+    firstLevel.d = secondLevel
+    sizeof(secondLevel).should.be.equal(24)
   })
 
   it('handle hasOwnProperty key', function () {
@@ -146,6 +152,13 @@ describe('sizeof', function () {
       map.set(5, 'Test')
       map.set('65', 'Again')
       sizeof(map).should.equal(30)
+    })
+
+    it('only count the key for circular references', function () {
+      const map = new Map()
+      var object = { a: 1, b: map }
+      map.set(5, object)
+      sizeof(map).should.be.equal(20)
     })
   })
   describe('sets', () => {
