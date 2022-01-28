@@ -2,6 +2,7 @@
 
 /* global describe, it */
 
+require('should')
 var sizeof = require('../index')
 
 describe('sizeof', function () {
@@ -131,8 +132,8 @@ describe('sizeof', function () {
     const c = Symbol('c')
     const d = Symbol('d')
     const obj = { [a]: { [b]: { [c]: d } } }
-    obj[Symbol()] = obj[a]
-    sizeof(obj).should.equal(8)
+    obj[Symbol('e')] = obj[a]
+    sizeof(obj).should.equal(10)
   })
 
   it('supports global symbols', () => {
