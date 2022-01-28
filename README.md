@@ -1,6 +1,6 @@
 ## object-sizeof
 
-![Build Status](https://github.com/daneren2005/sizeof/actions/workflows/run-tests/badge.svg)
+![Build Status](https://github.com/daneren2005/sizeof/actions/workflows/run-tests.yml/badge.svg)
 
 [![NPM](https://nodei.co/npm/@daneren2005/object-sizeof.png?downloads=true&downloadRank=true)](https://www.npmjs.com/package/@daneren2005/object-sizeof)
 
