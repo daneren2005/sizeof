@@ -1,5 +1,5 @@
 {
-  "name": "object-sizeof",
+  "name": "@daneren2005/object-sizeof",
   "version": "1.6.1",
   "description": "Sizeof of a JavaScript object in Bytes",
   "main": "index.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/miktam/sizeof.git"
+    "url": "git://github.com/daneren2005/sizeof.git"
   },
   "keywords": [
     "sizeof",
@@ -19,7 +19,7 @@
     "object",
     "bytes"
   ],
-  "author": "Andrei Karpushonak",
+  "author": "Scott Jackson",
   "license": "MIT",
   "readmeFilename": "README.md",
   "devDependencies": {
